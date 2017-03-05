@@ -1,4 +1,6 @@
 defmodule ProblemB do
+  use Supervisor
+
   @moduledoc """
   ProblemB.
   """
@@ -9,14 +11,16 @@ defmodule ProblemB do
   Start an Agent to hold account balance and GenServer that updates it.
   """
   def start_link() do
-    GenServer.start_link(__MODULE__, nil)
+    Supervisor.start_link(__MODULE__, nil)
   end
 
   @doc false
   def init(_) do
-    {:ok, _} = State.start_link()
-    {:ok, _} = Server.start_link()
-    {:ok, nil}
+    children = [
+      worker(State, []),
+      worker(Server, []),
+    ]
+    supervise(children, strategy: :rest_for_one)
   end
 
   ## Do not change code below
