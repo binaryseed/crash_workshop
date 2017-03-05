@@ -1,4 +1,6 @@
 defmodule ProblemC do
+  use Supervisor
+
   @moduledoc """
   ProblemC.
   """
@@ -10,13 +12,15 @@ defmodule ProblemC do
   """
 
   def start_link() do
-    GenServer.start_link(__MODULE__, nil)
+    Supervisor.start_link(__MODULE__, nil)
   end
 
   def init(_) do
-    {:ok, _} = Person.start_link(:alice)
-    {:ok, _} = Person.start_link(:bob)
-    {:ok, nil}
+    children = [
+      worker(Person, [:alice], id: make_ref()),
+      worker(Person, [:bob], id: make_ref())
+    ]
+    supervise(children, strategy: :one_for_one)
   end
 
   ## Do not change code below
