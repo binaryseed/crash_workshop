@@ -9,8 +9,7 @@ defmodule ProblemA do
   def start_link() do
     Task.start_link(fn() ->
       receive do
-        :stop ->
-          exit(:stop)
+        :stop -> :stop
       end
     end)
   end
