@@ -2,6 +2,7 @@ defmodule ProblemF do
   @moduledoc """
   ProblemF.
   """
+  use Supervisor
 
   alias __MODULE__.{Logger, Server}
 
@@ -9,14 +10,16 @@ defmodule ProblemF do
   Start an Agent to hold account balance and GenServer that updates it.
   """
   def start_link() do
-    GenServer.start_link(__MODULE__, nil)
+    Supervisor.start_link(__MODULE__, [])
   end
 
   @doc false
   def init(_) do
-    {:ok, _} = Logger.start_link()
-    {:ok, _} = Server.start_link()
-    {:ok, nil}
+    children = [
+      worker(Logger, []),
+      worker(Server, [])
+    ]
+    supervise(children, strategy: :one_for_one)
   end
 
   ## Do not change code below
