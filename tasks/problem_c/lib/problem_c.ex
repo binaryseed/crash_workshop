@@ -10,7 +10,14 @@ defmodule ProblemC do
   `{:error, exception}` if an exception is raised.
   """
   def run(fun) do
-    task = Task.async(fun)
-    {:ok, Task.await(task, :infinity)}
+    fn ->
+      try do
+        {:ok, fun.()}
+      rescue
+        error -> {:error, error}
+      end
+    end
+    |> Task.async()
+    |> Task.await(:infinity)
   end
 end
