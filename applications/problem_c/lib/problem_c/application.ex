@@ -8,6 +8,6 @@ defmodule ProblemC.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
     children = [worker(ServerSupervisor, []), worker(Tracker, []), worker(Starter, [])]
-    Supervisor.start_link(children, [strategy: :one_for_one])
+    Supervisor.start_link(children, [strategy: :one_for_all])
   end
 end
